@@ -21,6 +21,7 @@ import io.r2dbc.h2.codecs.Codecs;
 import io.r2dbc.h2.util.Assert;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.IsolationLevel;
+import io.r2dbc.spi.TransactionDefinition;
 import io.r2dbc.spi.ValidationDepth;
 import org.h2.command.CommandInterface;
 import org.h2.engine.Constants;
@@ -36,13 +37,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import static io.r2dbc.spi.IsolationLevel.READ_COMMITTED;
-import static io.r2dbc.spi.IsolationLevel.READ_UNCOMMITTED;
-import static io.r2dbc.spi.IsolationLevel.REPEATABLE_READ;
-import static io.r2dbc.spi.IsolationLevel.SERIALIZABLE;
-import static org.h2.engine.Constants.LOCK_MODE_OFF;
-import static org.h2.engine.Constants.LOCK_MODE_READ_COMMITTED;
-import static org.h2.engine.Constants.LOCK_MODE_TABLE;
+import static io.r2dbc.spi.IsolationLevel.*;
+import static org.h2.engine.Constants.*;
 
 /**
  * An implementation of {@link Connection} for connecting to an H2 database.
@@ -90,6 +86,11 @@ public final class H2Connection implements Connection {
             return Mono.empty();
         })
             .onErrorMap(DbException.class, H2DatabaseExceptionFactory::convert);
+    }
+
+    @Override
+    public Publisher<Void> beginTransaction(TransactionDefinition definition) {
+        return beginTransaction(); // TODO: Implement the SPI!
     }
 
     @Override
