@@ -59,7 +59,7 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
             .execute())
             .flatMap(Result::getRowsUpdated)
             .as(StepVerifier::create)
-            .expectNext(1)
+            .expectNext(1L)
             .verifyComplete();
 
         connection.createStatement("SELECT my_col FROM lob_test")
@@ -79,7 +79,7 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
             .execute())
             .flatMap(Result::getRowsUpdated)
             .as(StepVerifier::create)
-            .expectNext(1)
+            .expectNext(1L)
             .verifyComplete();
 
         connection.createStatement("SELECT my_col FROM lob_test")
@@ -102,7 +102,7 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
             .execute())
             .flatMap(Result::getRowsUpdated)
             .as(StepVerifier::create)
-            .expectNext(1)
+            .expectNext(1L)
             .verifyComplete();
 
         connection.createStatement("SELECT my_col FROM lob_test")
@@ -118,14 +118,14 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
 
     @Test
     void testNullClob() {
-        createTable(connection, "NTEXT");
+        createTable(connection, "CLOB");
 
         Flux.from(connection.createStatement("INSERT INTO lob_test values($1)")
             .bindNull("$1", Clob.class)
             .execute())
             .flatMap(Result::getRowsUpdated)
             .as(StepVerifier::create)
-            .expectNext(1)
+            .expectNext(1L)
             .verifyComplete();
 
         connection.createStatement("SELECT my_col FROM lob_test")
@@ -137,15 +137,15 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
     }
 
     @Test
-    void testSmallClob() {
-        createTable(connection, "NTEXT");
+    void testClob() {
+        createTable(connection, "CLOB");
 
         Flux.from(connection.createStatement("INSERT INTO lob_test values($1)")
             .bind("$1", Clob.from(Mono.just("foo你好")))
             .execute())
             .flatMap(Result::getRowsUpdated)
             .as(StepVerifier::create)
-            .expectNext(1)
+            .expectNext(1L)
             .verifyComplete();
 
         connection.createStatement("SELECT my_col FROM lob_test")
@@ -158,8 +158,8 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
     }
 
     @Test
-    void testBigClob() {
-        createTable(connection, "LONGTEXT");
+    void testCharacterLargeObject() {
+        createTable(connection, "CHARACTER LARGE OBJECT");
 
         int i = 50 + new Random().nextInt(1000);
 
@@ -170,7 +170,7 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
             .execute())
             .flatMap(Result::getRowsUpdated)
             .as(StepVerifier::create)
-            .expectNext(1)
+            .expectNext(1L)
             .verifyComplete();
 
         connection.createStatement("SELECT my_col FROM lob_test")
@@ -193,7 +193,7 @@ class H2LobIntegrationTest extends IntegrationTestSupport {
                 .execute()
                 .flatMap(H2Result::getRowsUpdated))
             .as(StepVerifier::create)
-            .expectNext(0)
+            .expectNext(0L)
             .verifyComplete();
     }
 }
